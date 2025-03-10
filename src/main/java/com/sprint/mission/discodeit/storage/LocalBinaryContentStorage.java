@@ -1,7 +1,8 @@
-package com.sprint.mission.discodeit.service.basic;
+package com.sprint.mission.discodeit.storage;
 
 import com.sprint.mission.discodeit.dto.data.BinaryContentDto;
-import com.sprint.mission.discodeit.service.MessageService.BinaryContentStorage;
+
+import com.sprint.mission.discodeit.service.basic.BasicBinaryContentService;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import java.io.File;

@@ -26,9 +26,4 @@ public interface MessageService {
 
   PageResponse<Message> pageMessage(int start,int end);
 
-  interface BinaryContentStorage {
-    UUID put(UUID id ,byte bytes[]);
-    InputStream get(UUID id);
-    <T> ResponseEntity<T> download(BinaryContentDto binaryContentDto);
-  }
 }

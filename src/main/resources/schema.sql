@@ -1,24 +1,3 @@
-create table base_entity
-(
-    id         uuid not null
-        primary key,
-    created_at timestamp(6) with time zone
-);
-
-alter table base_entity
-    owner to postgres;
-
-create table base_update_entity
-(
-    updated_at timestamp(6) with time zone,
-    id         uuid not null
-        primary key
-        constraint fkd05pud4b2b7kw8tsvw71eufx1
-            references base_entity
-);
-
-alter table base_update_entity
-    owner to postgres;
 
 create table binary_content
 (

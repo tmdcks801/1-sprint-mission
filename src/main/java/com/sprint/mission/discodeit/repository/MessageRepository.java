@@ -25,4 +25,6 @@ public interface MessageRepository extends JpaRepository<Message,UUID> {
   void deleteAllByChannelId(UUID channelId);
 
   Page<Message> findTopNByOrderByCreatedAtAsc(Pageable pageable);
+
+  Page<Message> findByIdGreaterThanOrderByCreatedAt(UUID lastMessageId, Pageable size);
 }

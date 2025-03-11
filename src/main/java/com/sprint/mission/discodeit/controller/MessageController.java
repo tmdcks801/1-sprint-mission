@@ -88,7 +88,14 @@ public class MessageController implements MessageApi {
   }
 
   @GetMapping("/page")
-  public PageResponse<Message> paginMessage( @RequestParam int start,  @RequestParam int end){
+  public PageResponse<Message> pagingMessage( @RequestParam int start,  @RequestParam int end){
     return messageService.pageMessage(start,end);
+  }
+
+  @GetMapping("/cusrsor")
+  public PageResponse<Message> cursorMessage( @RequestParam(required = false) UUID lastMessageId,
+      @RequestParam int size){
+
+      return messageService.cursorMessage(lastMessageId,size);
   }
 }

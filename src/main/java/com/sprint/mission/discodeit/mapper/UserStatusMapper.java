@@ -5,7 +5,7 @@ import com.sprint.mission.discodeit.entity.UserStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserStatusMapper {
   UserStatusMapper INSTANCE= Mappers.getMapper(UserStatusMapper.class);
   UserStatusDto userStatusToDto(UserStatus userStatus);

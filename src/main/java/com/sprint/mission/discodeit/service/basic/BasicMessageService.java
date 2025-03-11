@@ -3,11 +3,11 @@ package com.sprint.mission.discodeit.service.basic;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
+import com.sprint.mission.discodeit.dto.response.Cursor;
 import com.sprint.mission.discodeit.dto.response.PageResponse;
 import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.mapper.PageResponceMapper;
-import com.sprint.mission.discodeit.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
 import com.sprint.mission.discodeit.repository.MessageRepository;
 import com.sprint.mission.discodeit.repository.UserRepository;
@@ -112,6 +112,24 @@ public class BasicMessageService implements MessageService {
     Pageable pageable = PageRequest.of(start, end);
     Page<Message> messages= messageRepository.findTopNByOrderByCreatedAtAsc(pageable);
     return PageResponceMapper.fromPage((messages));
+  }
+
+  @Override
+  public PageResponse<Message> cursorMessage(UUID lastMessageId, int size) {
+    Page<Message> messages;
+
+    if (lastMessageId == null) {
+      Pageable pageable = PageRequest.of(0, size);
+      messages = messageRepository.findTopNByOrderByCreatedAtAsc(pageable);
+    } else {
+      messages = messageRepository.findByIdGreaterThanOrderByCreatedAt(lastMessageId, PageRequest.of(0, size));
+    }
+
+    UUID nextCursor = messages.isEmpty() ? null : messages.getContent().get(messages.getContent().size() - 1).getId();
+
+    Cursor<Message> cursorPage = new Cursor<>(messages.toList(), nextCursor, !messages.isEmpty());
+
+    return PageResponceMapper.fromCursor(cursorPage, size);
   }
 
 }

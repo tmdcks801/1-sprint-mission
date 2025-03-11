@@ -21,8 +21,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
+
 @Service
+@RequiredArgsConstructor
 public class BasicUserService implements UserService {
 
   private final UserRepository userRepository;

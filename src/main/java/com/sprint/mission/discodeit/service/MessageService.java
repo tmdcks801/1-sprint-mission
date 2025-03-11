@@ -26,4 +26,5 @@ public interface MessageService {
 
   PageResponse<Message> pageMessage(int start,int end);
 
+  PageResponse<Message> cursorMessage(UUID lastMessageId, int size);
 }

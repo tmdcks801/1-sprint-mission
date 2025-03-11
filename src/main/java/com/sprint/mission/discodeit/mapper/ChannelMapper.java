@@ -5,7 +5,7 @@ import com.sprint.mission.discodeit.entity.Channel;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface ChannelMapper {
 
   ChannelMapper instance= Mappers.getMapper(ChannelMapper.class);

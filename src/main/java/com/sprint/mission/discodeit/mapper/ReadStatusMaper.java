@@ -5,7 +5,7 @@ import com.sprint.mission.discodeit.entity.ReadStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface ReadStatusMaper {
   ReadStatusMaper Instance= Mappers.getMapper(ReadStatusMaper.class);
   ReadStatusDto readStatusToDto(ReadStatus readStatus);

@@ -32,12 +32,14 @@ public class BasicBinaryContentService implements BinaryContentService {
         (long) bytes.length,
         contentType
     );
+    binaryContentRepository.save(binaryContent);
     binaryContentStorage.put(binaryContent.getId(),bytes);
-    return binaryContentRepository.save(binaryContent);
+    return binaryContent;
   }
 
   @Override
   public BinaryContent find(UUID binaryContentId) {
+    System.out.println(binaryContentId);
     return binaryContentRepository.findById(binaryContentId)
         .orElseThrow(() -> new NoSuchElementException(
             "BinaryContent with id " + binaryContentId + " not found"));

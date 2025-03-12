@@ -1,6 +1,7 @@
 package com.sprint.mission.discodeit.service;
 
 import com.sprint.mission.discodeit.dto.data.BinaryContentDto;
+import com.sprint.mission.discodeit.dto.data.MessageDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageCreateRequest;
 import com.sprint.mission.discodeit.dto.request.MessageUpdateRequest;
@@ -13,18 +14,18 @@ import org.springframework.http.ResponseEntity;
 
 public interface MessageService {
 
-  Message create(MessageCreateRequest messageCreateRequest,
+  MessageDto create(MessageCreateRequest messageCreateRequest,
       List<BinaryContentCreateRequest> binaryContentCreateRequests);
 
-  Message find(UUID messageId);
+  MessageDto find(UUID messageId);
 
-  List<Message> findAllByChannelId(UUID channelId);
+  List<MessageDto> findAllByChannelId(UUID channelId);
 
-  Message update(UUID messageId, MessageUpdateRequest request);
+  MessageDto update(UUID messageId, MessageUpdateRequest request);
 
   void delete(UUID messageId);
 
-  PageResponse<Message> pageMessage(int start,int end);
+  PageResponse<MessageDto> pageMessage(int start,int end);
 
-  PageResponse<Message> cursorMessage(UUID lastMessageId, int size);
+  PageResponse<MessageDto> cursorMessage(UUID lastMessageId, int size);
 }

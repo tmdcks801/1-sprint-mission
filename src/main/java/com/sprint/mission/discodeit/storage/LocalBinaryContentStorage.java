@@ -39,15 +39,15 @@ public class LocalBinaryContentStorage implements BinaryContentStorage {
     } catch (IOException e) {
       throw new RuntimeException("이미지 저장 실패", e);
     }
-    System.out.println(binaryContentService.find(id).toString());
-    binaryContentService.find(id).setPath(imgPath);
+    //System.out.println(binaryContentService.findEntity(id).toString());
+    binaryContentService.findEntity(id).setPath(imgPath);
     return id;
   }
 
   @Override
   public InputStream get(UUID id) {
 
-    String filePath = binaryContentService.find(id).getPath();
+    String filePath = binaryContentService.find(id).path();
 
     try {
       return new FileInputStream(filePath);

@@ -49,6 +49,15 @@ public class BasicBinaryContentService implements BinaryContentService {
   }
 
   @Override
+  public BinaryContent findEntity(UUID binaryContentId) {
+    System.out.println(binaryContentId);
+    BinaryContent binaryContent= binaryContentRepository.findById(binaryContentId)
+        .orElseThrow(() -> new NoSuchElementException(
+            "BinaryContent with id " + binaryContentId + " not found"));
+    return binaryContent;
+  }
+
+  @Override
   public List<BinaryContentDto> findAllByIdIn(List<UUID> binaryContentIds) {
     return binaryContentRepository.findAllByIdIn(binaryContentIds).stream()
         .map(binaryContentMapper::binaryContentToDto)

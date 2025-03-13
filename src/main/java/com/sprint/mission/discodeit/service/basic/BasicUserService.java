@@ -1,5 +1,6 @@
 package com.sprint.mission.discodeit.service.basic;
 
+import com.sprint.mission.discodeit.dto.data.BinaryContentDto;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
@@ -52,8 +53,8 @@ public class BasicUserService implements UserService {
           String fileName = profileRequest.fileName();
           String contentType = profileRequest.contentType();
           byte[] bytes = profileRequest.bytes();
-          BinaryContent createdBinaryContent = BasicBinaryContentService.create(profileRequest);
-          return createdBinaryContent.getId();
+          BinaryContentDto createdBinaryContent = BasicBinaryContentService.create(profileRequest);
+          return createdBinaryContent.id();
         })
         .orElse(null);
     String password = userCreateRequest.password();
@@ -61,9 +62,15 @@ public class BasicUserService implements UserService {
     User user = new User(username, email, password, nullableProfileId);
     User createdUser = userRepository.save(user);
 
+    System.out.println(createdUser.getUsername());
+    System.out.println(user.getUsername());
+    System.out.println(userMapper.userToDto(createdUser).username());
+
     Instant now = Instant.now();
     UserStatus userStatus = new UserStatus(createdUser.getId(), now);
     userStatusRepository.save(userStatus);
+
+
 
     return userMapper.userToDto(createdUser);
   }
@@ -102,8 +109,8 @@ public class BasicUserService implements UserService {
           Optional.ofNullable(user.getProfileImage())
               .ifPresent(BasicBinaryContentService::delete);
 
-          BinaryContent createdBinaryContent = BasicBinaryContentService.create(profileRequest);
-          return createdBinaryContent.getId();
+          BinaryContentDto createdBinaryContent = BasicBinaryContentService.create(profileRequest);
+          return createdBinaryContent.id();
         })
         .orElse(null);
 

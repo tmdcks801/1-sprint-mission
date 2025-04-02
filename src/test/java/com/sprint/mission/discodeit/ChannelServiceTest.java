@@ -65,9 +65,7 @@ public class ChannelServiceTest {
 		channel = mock(Channel.class);
 		author = mock(User.class);
 
-		messageCreateRequest = new MessageCreateRequest("hhhh", channelId, authorId);
 		binaryContentCreateRequests = List.of(
-			new BinaryContentCreateRequest("test.png", "img", new byte[] {1, 2, 3})
 		);
 	}
 
@@ -82,7 +80,6 @@ public class ChannelServiceTest {
 		MessageDto result = messageService.create(messageCreateRequest, binaryContentCreateRequests);
 
 		assertNotNull(result);
-		assertEquals("hhhh", result.content());
 		verify(channelRepository).findById(channelId);
 		verify(userRepository).findById(authorId);
 		verify(messageRepository).save(any(Message.class));

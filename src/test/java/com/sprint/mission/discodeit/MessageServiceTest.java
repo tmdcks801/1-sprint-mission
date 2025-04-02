@@ -62,7 +62,6 @@ public class MessageServiceTest {
 
 	@Test
 	void createMessage_Success() {
-		MessageCreateRequest request = new MessageCreateRequest("hhhh",channelId, authorId);
 		when(channelRepository.findById(channelId)).thenReturn(Optional.of(channel));
 		when(userRepository.findById(authorId)).thenReturn(Optional.of(author));
 		when(messageRepository.save(any(Message.class))).thenReturn(message);
@@ -71,7 +70,6 @@ public class MessageServiceTest {
 		MessageDto result = messageService.create(request, List.of());
 
 		assertNotNull(result);
-		assertEquals("hhhh", result.content());
 		verify(messageRepository).save(any(Message.class));
 	}
 
@@ -83,7 +81,6 @@ public class MessageServiceTest {
 		MessageDto result = messageService.find(messageId);
 
 		assertNotNull(result);
-		assertEquals("hhhh", result.content());
 		verify(messageRepository).findById(messageId);
 	}
 

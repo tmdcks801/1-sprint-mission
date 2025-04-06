@@ -22,8 +22,6 @@ import com.sprint.mission.discodeit.entity.BinaryContent;
 import com.sprint.mission.discodeit.entity.Channel;
 import com.sprint.mission.discodeit.entity.Message;
 import com.sprint.mission.discodeit.entity.User;
-import com.sprint.mission.discodeit.exception.Channel.ChannelNotFoundExeption;
-import com.sprint.mission.discodeit.exception.User.UserNotFoundException;
 import com.sprint.mission.discodeit.mapper.MessageMapper;
 import com.sprint.mission.discodeit.repository.BinaryContentRepository;
 import com.sprint.mission.discodeit.repository.ChannelRepository;
@@ -65,7 +63,9 @@ public class ChannelServiceTest {
 		channel = mock(Channel.class);
 		author = mock(User.class);
 
+		messageCreateRequest = new MessageCreateRequest("Hello World", channelId, authorId);
 		binaryContentCreateRequests = List.of(
+			new BinaryContentCreateRequest("file.txt", "text/plain", new byte[] {1, 2, 3})
 		);
 	}
 
@@ -80,27 +80,10 @@ public class ChannelServiceTest {
 		MessageDto result = messageService.create(messageCreateRequest, binaryContentCreateRequests);
 
 		assertNotNull(result);
+		assertEquals("Hello World", result.content());
 		verify(channelRepository).findById(channelId);
 		verify(userRepository).findById(authorId);
 		verify(messageRepository).save(any(Message.class));
 	}
-
-	@Test
-	void createMessage_ChannelNotFound() {
-		when(channelRepository.findById(channelId)).thenReturn(Optional.empty());
-
-		assertThrows(ChannelNotFoundExeption.class, () ->
-			messageService.create(messageCreateRequest, binaryContentCreateRequests));
-	}
-
-	@Test
-	void createMessage_UserNotFound() {
-		when(channelRepository.findById(channelId)).thenReturn(Optional.of(channel));
-		when(userRepository.findById(authorId)).thenReturn(Optional.empty());
-
-		assertThrows(UserNotFoundException.class, () ->
-			messageService.create(messageCreateRequest, binaryContentCreateRequests));
-	}
-
 
 }

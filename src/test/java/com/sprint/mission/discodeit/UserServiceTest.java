@@ -53,24 +53,24 @@ public class UserServiceTest {
 	@Test
 	public void givenValidUser_whenCreateUser_thenReturnCreatedUser() {
 
-		UserCreateRequest request = new UserCreateRequest("john_doe", "john@example.com", "password123");
+		UserCreateRequest request = new UserCreateRequest("김승", "김승@example.com", "password123");
 		Optional<BinaryContentCreateRequest> optionalProfile = Optional.empty();
 
 
 
 		UserDto result = userService.create(request, optionalProfile);
 
-		assertEquals("john_doe", result.username());
-		assertEquals("john@example.com", result.email());
+		assertEquals("김승", result.username());
+		assertEquals("김승@example.com", result.email());
 	}
 
 	@Test
 	@Rollback(false)
 	public void givenInvalidUser_whenCreateUser_thenThrowException() {
-		User user = new User("john_doe", "john@example.com", "password123", null);
+		User user = new User("김승", "김승@example.com", "password123", null);
 		userRepository.save(user);
 		userRepository.flush();
-		UserCreateRequest request = new UserCreateRequest("john_doe", "john@example.com", "password123");
+		UserCreateRequest request = new UserCreateRequest("김승", "김승@example.com", "password123");
 		Optional<BinaryContentCreateRequest> optionalProfile = Optional.empty();
 
 		assertThrows(UserAlreadyExistException.class, () -> {

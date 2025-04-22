@@ -43,5 +43,6 @@ bin/
 
 ### 숨김 파일 ###
 .*
+discodeit.env
 !.gitignore
 application.yml

@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SessionRegistry {
+public class SessionRegistryRepo {
   private final Map<UUID, HttpSession> userSessionMap = new ConcurrentHashMap<>();
 
   public void register(UUID userId, HttpSession session) {

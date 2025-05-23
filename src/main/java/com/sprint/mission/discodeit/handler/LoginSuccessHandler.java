@@ -1,10 +1,11 @@
 package com.sprint.mission.discodeit.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sprint.mission.discodeit.component.SessionRegistry;
+import com.sprint.mission.discodeit.component.SessionRegistryRepo;
 import com.sprint.mission.discodeit.entity.UserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +23,7 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
   private final CsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-  private final SessionRegistry sessionRegistry;
+  private final SessionRegistryRepo sessionRegistryRepo;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request,
@@ -41,6 +42,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    sessionRegistryRepo.invalidate(userDetails.getUserId());
+    HttpSession currentSession = request.getSession(false);
+    if (currentSession != null) {
+      sessionRegistryRepo.register(userDetails.getUserId(), currentSession);
+    }
 
     Map<String, Object> responseBody = new HashMap<>();
     responseBody.put("token", csrfToken.getToken());
@@ -49,7 +55,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     response.setContentType("application/json");
 
-    sessionRegistry.register(userDetails.getUserId(), request.getSession(false));
+    sessionRegistryRepo.register(userDetails.getUserId(), request.getSession(false));
     new ObjectMapper().writeValue(response.getWriter(), responseBody);
   }
 }

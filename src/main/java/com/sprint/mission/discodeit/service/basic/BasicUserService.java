@@ -1,6 +1,6 @@
 package com.sprint.mission.discodeit.service.basic;
 
-import com.sprint.mission.discodeit.component.SessionRegistry;
+import com.sprint.mission.discodeit.component.SessionRegistryRepo;
 import com.sprint.mission.discodeit.dto.data.UserDto;
 import com.sprint.mission.discodeit.dto.request.BinaryContentCreateRequest;
 import com.sprint.mission.discodeit.dto.request.UserCreateRequest;
@@ -38,7 +38,7 @@ public class BasicUserService implements UserService {
   private final BinaryContentRepository binaryContentRepository;
   private final BinaryContentStorage binaryContentStorage;
   private final PasswordEncoder passwordEncoder;
-  private final SessionRegistry sessionRegistry;
+  private final SessionRegistryRepo sessionRegistryRepo;
 
   @Transactional
   @Override
@@ -171,7 +171,7 @@ public class BasicUserService implements UserService {
           return exception;
         });
     user.setRole(role);
-    sessionRegistry.invalidate(userId);
+    sessionRegistryRepo.invalidate(userId);
     return userMapper.toDto(user);
   }
 }

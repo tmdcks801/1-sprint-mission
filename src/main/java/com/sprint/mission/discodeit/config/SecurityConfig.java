@@ -4,6 +4,10 @@ import com.sprint.mission.discodeit.component.SessionRegistryRepo;
 import com.sprint.mission.discodeit.filter.UserNamePasswordFilter;
 import com.sprint.mission.discodeit.handler.LoginSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -124,8 +128,27 @@ public class SecurityConfig {
   public PersistentTokenRepository persistentTokenRepository(DataSource dataSource) {
     JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
     repo.setDataSource(dataSource);
-    repo.setCreateTableOnStartup(true);
-    repo.setCreateTableOnStartup(true);
+
+    try (Connection conn = dataSource.getConnection();
+        ResultSet rs = conn.getMetaData().getTables(null, null, "persistent_logins", null)) {
+
+      if (!rs.next()) {
+        try (Statement stmt = conn.createStatement()) {
+          stmt.executeUpdate("""
+                    create table persistent_logins (
+                        username varchar(64) not null,
+                        series varchar(64) primary key,
+                        token varchar(64) not null,
+                        last_used timestamp not null
+                    )
+                """);
+        }
+      }
+
+    } catch (SQLException e) {
+      throw new RuntimeException("생성 안됨", e);
+    }
+
     return repo;
   }
 

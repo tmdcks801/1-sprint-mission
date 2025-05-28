@@ -1,61 +1,48 @@
 package com.sprint.mission.discodeit.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sprint.mission.discodeit.component.SessionRegistryRepo;
-import com.sprint.mission.discodeit.entity.UserDetails;
+import com.sprint.mission.discodeit.dto.data.UserDto;
+import com.sprint.mission.discodeit.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
+import jakarta.servlet.http.Cookie;
+import org.springframework.stereotype.Component;
 
-@AllArgsConstructor
+@Component
+@RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-  private final CsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-  private final SessionRegistryRepo sessionRegistryRepo;
+  private final JwtService jwtService;
+  private final ObjectMapper objectMapper;
 
   @Override
-  public void onAuthenticationSuccess(HttpServletRequest request,
-      HttpServletResponse response,
+  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException {
 
-    CsrfToken csrfToken = csrfTokenRepository.generateToken(request);
-    csrfTokenRepository.saveToken(csrfToken, request, response);
+    UserDto userDto = (UserDto) authentication.getPrincipal();
 
-    SecurityContext context = SecurityContextHolder.createEmptyContext();
-    context.setAuthentication(authentication);
-    SecurityContextHolder.setContext(context);
+    String accessToken = jwtService.generateAccessToken(userDto);
+    String refreshToken = jwtService.generateRefreshToken();
 
-    HttpSessionSecurityContextRepository repo = new HttpSessionSecurityContextRepository();
-    repo.saveContext(context, request, response);
+    jwtService.saveSession(refreshToken, accessToken, userDto);
 
+    // Set refresh token in cookie
+    Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+    refreshTokenCookie.setHttpOnly(false);
+    refreshTokenCookie.setSecure(true);
+    refreshTokenCookie.setPath("/");
+    refreshTokenCookie.setMaxAge((int) jwtService.getRefreshTokenValiditySeconds());
+    refreshTokenCookie.setAttribute("SameSite", "None");
+    response.addCookie(refreshTokenCookie);
 
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    sessionRegistryRepo.invalidate(userDetails.getUserId());
-    HttpSession currentSession = request.getSession(false);
-    if (currentSession != null) {
-      sessionRegistryRepo.register(userDetails.getUserId(), currentSession);
-    }
-
-    Map<String, Object> responseBody = new HashMap<>();
-    responseBody.put("token", csrfToken.getToken());
-    responseBody.put("id", userDetails.getUserId());
-    responseBody.put("username", userDetails.getUsername());
-
+    // Return access token in response body
     response.setContentType("application/json");
-
-    sessionRegistryRepo.register(userDetails.getUserId(), request.getSession(false));
-    new ObjectMapper().writeValue(response.getWriter(), responseBody);
+    response.setCharacterEncoding("UTF-8");
+    response.getWriter().write(objectMapper.writeValueAsString(accessToken));
+    response.setStatus(HttpServletResponse.SC_OK);
   }
 }

@@ -62,4 +62,6 @@ discodeit:
 logging:
   level:
     org.springframework.security: TRACE
+jwt:
+  secret: tmdcks1234sdssd.skksldka[pdlaljlkajl;fdka;lkfpo;qlf;lk[apkaskd;alkfa;
 
